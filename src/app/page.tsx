@@ -5,7 +5,7 @@ import { LEVELS, LevelValue } from '@/types';
 
 export default function RegisterPage() {
   const [name, setName] = useState('');
-  const [level, setLevel] = useState<LevelValue>(3);
+  const [level, setLevel] = useState<LevelValue | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [resultToken, setResultToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -14,6 +14,10 @@ export default function RegisterPage() {
     e.preventDefault();
     if (!name.trim()) {
       setError('名前を入力してください');
+      return;
+    }
+    if (!level) {
+      setError('スマブラ経験を選択してください');
       return;
     }
 
@@ -100,7 +104,7 @@ export default function RegisterPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              あなたのレベル
+              スマブラ経験
             </label>
             <div className="space-y-2">
               {(Object.entries(LEVELS) as [string, string][]).map(([value, label]) => (
