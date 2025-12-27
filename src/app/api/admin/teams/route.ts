@@ -4,8 +4,10 @@ import { getAllTeams, getAllParticipants, getTeamById, updateTeam, updatePartici
 // チーム一覧取得
 export async function GET() {
   try {
-    const teams = getAllTeams().sort((a, b) => a.name.localeCompare(b.name));
-    const participants = getAllParticipants().sort((a, b) => a.name.localeCompare(b.name));
+    const teams = await getAllTeams();
+    teams.sort((a, b) => a.name.localeCompare(b.name));
+    const participants = await getAllParticipants();
+    participants.sort((a, b) => a.name.localeCompare(b.name));
 
     // チームにリーダー情報を追加
     const teamsWithLeaders = teams.map((team) => {
@@ -42,7 +44,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // 現在のチーム情報を取得
-    const currentTeam = getTeamById(teamId);
+    const currentTeam = await getTeamById(teamId);
 
     if (!currentTeam) {
       return NextResponse.json(
@@ -53,16 +55,16 @@ export async function PUT(request: NextRequest) {
 
     // 古いリーダーのフラグを解除
     if (currentTeam.leader_id) {
-      updateParticipant(currentTeam.leader_id, { is_leader: false, team_id: null });
+      await updateParticipant(currentTeam.leader_id, { is_leader: false, team_id: null });
     }
 
     // 新しいリーダーを設定
     if (leaderId) {
-      updateParticipant(leaderId, { is_leader: true, team_id: teamId });
+      await updateParticipant(leaderId, { is_leader: true, team_id: teamId });
     }
 
     // チーム情報を更新
-    updateTeam(teamId, {
+    await updateTeam(teamId, {
       name: teamName,
       leader_id: leaderId || null,
     });

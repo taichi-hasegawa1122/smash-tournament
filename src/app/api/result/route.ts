@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     }
 
     // 参加者を取得
-    const participant = getParticipantByToken(token);
+    const participant = await getParticipantByToken(token);
 
     if (!participant) {
       return NextResponse.json(
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     }
 
     // アプリ状態を取得
-    const appState = getAppState();
+    const appState = await getAppState();
     const isPublished = appState.is_published;
 
     // 未公開の場合は参加者情報のみ返す
@@ -38,8 +38,8 @@ export async function GET(request: NextRequest) {
     }
 
     // チームとメンバーを取得
-    const teams = getAllTeams();
-    const allParticipants = getAllParticipants();
+    const teams = await getAllTeams();
+    const allParticipants = await getAllParticipants();
 
     // チームごとにメンバーを整理
     const teamsWithMembers: TeamWithMembers[] = teams.map((team) => {

@@ -4,7 +4,7 @@ import { getAppState, updateAppState } from '@/lib/db';
 // 公開状態を取得
 export async function GET() {
   try {
-    const appState = getAppState();
+    const appState = await getAppState();
 
     return NextResponse.json({
       isAssigned: appState.is_assigned,
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
 
     // 公開する場合は編成が確定済みか確認
     if (publish) {
-      const appState = getAppState();
+      const appState = await getAppState();
 
       if (!appState.is_assigned) {
         return NextResponse.json(
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    updateAppState({ is_published: publish });
+    await updateAppState({ is_published: publish });
 
     return NextResponse.json({ success: true, isPublished: publish });
   } catch (error) {

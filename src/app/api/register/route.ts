@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
       created_at: new Date().toISOString(),
     };
 
-    addParticipant(participant);
+    await addParticipant(participant);
 
     return NextResponse.json({
       success: true,

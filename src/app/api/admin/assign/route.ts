@@ -5,9 +5,10 @@ import { assignTeams, generatePreview } from '@/lib/assignment';
 // プレビュー取得
 export async function GET() {
   try {
-    const teams = getAllTeams().sort((a, b) => a.name.localeCompare(b.name));
-    const participants = getAllParticipants();
-    const appState = getAppState();
+    const teams = await getAllTeams();
+    teams.sort((a, b) => a.name.localeCompare(b.name));
+    const participants = await getAllParticipants();
+    const appState = await getAppState();
 
     // リーダーが4人設定されているか確認
     const leaders = participants.filter((p) => p.is_leader);
@@ -81,8 +82,8 @@ export async function GET() {
 // 編成を確定
 export async function POST() {
   try {
-    const teams = getAllTeams();
-    const participants = getAllParticipants();
+    const teams = await getAllTeams();
+    const participants = await getAllParticipants();
 
     // リーダーが4人設定されているか確認
     const leaders = participants.filter((p) => p.is_leader);
@@ -103,10 +104,10 @@ export async function POST() {
         updates.push({ id: memberId, team_id: teamId });
       }
     }
-    bulkUpdateParticipants(updates);
+    await bulkUpdateParticipants(updates);
 
     // アプリ状態を更新
-    updateAppState({
+    await updateAppState({
       is_assigned: true,
       assigned_at: new Date().toISOString(),
     });
@@ -124,7 +125,7 @@ export async function POST() {
 // 編成をリセット
 export async function DELETE() {
   try {
-    resetAssignments();
+    await resetAssignments();
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Assign DELETE error:', error);

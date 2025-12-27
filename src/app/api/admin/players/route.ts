@@ -4,7 +4,8 @@ import { getAllParticipants, deleteParticipant } from '@/lib/db';
 // 参加者一覧取得
 export async function GET() {
   try {
-    const participants = getAllParticipants().sort(
+    const participants = await getAllParticipants();
+    participants.sort(
       (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     );
 
@@ -30,7 +31,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const deleted = deleteParticipant(id);
+    const deleted = await deleteParticipant(id);
 
     if (!deleted) {
       return NextResponse.json(
